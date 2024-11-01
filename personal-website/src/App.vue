@@ -11,6 +11,6 @@ import MenuBar from './components/MenuBar.vue'
 
 <style scoped>
   .content {
-    padding-top: 15vh;
+    padding-top: 7vh;
   }
 </style>

@@ -16,7 +16,6 @@
     right: 0;
     width: 100%;
     margin-top:0px;
-    padding: 1vh;
     font-size: 5vh;
     z-index: 1000;
     background-color: var(--vt-c-black-mute);
@@ -25,7 +24,7 @@
     list-style: none;
     display: inline-block;
     color: white;
-    padding: 25px 25px;
+    padding: 2vh 2vh;
   }
 
   nav a.router-link-exact-active {
