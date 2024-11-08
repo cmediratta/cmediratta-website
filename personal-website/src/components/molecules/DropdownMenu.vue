@@ -1,7 +1,7 @@
 <template>
   <div class="dropdown">
     <div @click="toggleDropdown" class="dropdown-toggle">
-      {{ selected || placeholder }}
+      {{ modelValue || placeholder }}
     </div>
     <ul v-if="isOpen" class="dropdown-menu">
       <li
@@ -27,22 +27,28 @@
       placeholder: {
         type: String,
         default: "Select an option"
+      },
+      modelValue: {
+      default: null
       }
     },
     data() {
       return {
         isOpen: false,
-        selected: null
       };
+    },
+    computed: {
+      selected() {
+        return this.modelValue;
+      }
     },
     methods: {
       toggleDropdown() {
         this.isOpen = !this.isOpen;
       },
       selectOption(option) {
-        this.selected = option;
-        this.isOpen = false;
-        this.$emit("select", option);
+        this.toggleDropdown()
+        this.$emit("update:modelValue", option);
       }
     }
   };

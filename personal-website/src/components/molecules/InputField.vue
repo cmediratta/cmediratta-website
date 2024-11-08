@@ -7,12 +7,16 @@
     class: {
       type: String,
       required: true
+    },
+    dt: {
+      required: false
     }
   })
+  const model = defineModel()
 </script>
 
 <template>
-  <input :type="type" :class="class">
+  <input :type="type" :class="class" v-model="model">
 </template>
 
 <style>
