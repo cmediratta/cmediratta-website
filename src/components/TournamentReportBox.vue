@@ -36,7 +36,7 @@
   }
 
   async function sendRequest(destination, contents) {
-    var response = await fetch('http://127.0.0.1:5000/' + destination, {
+    var response = await fetch('ec2-3-16-43-98.us-east-2.compute.amazonaws.com/' + destination, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: contents
