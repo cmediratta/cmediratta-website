@@ -35,11 +35,11 @@
     win_avg = msg.win_avg
   }
 
-  async function sendRequest(destination, contents) {
-    var response = await fetch('ec2-3-16-43-98.us-east-2.compute.amazonaws.com/' + destination, {
+  async function sendRequest(destination, payload) {
+    var response = await fetch('http://ec2-18-222-178-229.us-east-2.compute.amazonaws.com/' + destination, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: contents
+      body: payload
     });
 
     var data = await response.json()
