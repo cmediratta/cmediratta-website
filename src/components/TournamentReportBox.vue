@@ -36,7 +36,7 @@
   }
 
   async function sendRequest(destination, payload) {
-    var response = await fetch('http://ec2-18-222-178-229.us-east-2.compute.amazonaws.com/' + destination, {
+    var response = await fetch('https://server.cmediratta.com/' + destination, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: payload
