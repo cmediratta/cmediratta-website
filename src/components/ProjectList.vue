@@ -31,5 +31,6 @@
     width: 80%;
     margin: 0 auto 3vw auto;
     z-index: 0;
+    border-radius: 3vw;
   }
 </style>

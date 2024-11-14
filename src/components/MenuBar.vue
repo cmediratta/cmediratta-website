@@ -16,7 +16,7 @@
     right: 0;
     width: 100%;
     margin-top:0px;
-    font-size: 5vh;
+    font-size: 2.5vw;
     z-index: 1000;
     background-color: var(--vt-c-black-mute);
   }

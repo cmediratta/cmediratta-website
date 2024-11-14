@@ -1,6 +1,8 @@
 <script setup>
+  const SERVER = 'https://server.cmediratta.com/'
   import InputField from './molecules/InputField.vue'
   import DropdownMenu from './molecules/DropdownMenu.vue'
+  import PlayerTable from './molecules/PlayerTable.vue'
   import { ref } from 'vue'
   const rds = [1, 2, 3, 4, 5]
   var tournament_divisions = ref([])
@@ -9,8 +11,9 @@
   const num_rounds = ref(0)
   const email = ref('')
   var state = ref('input')
-  var win_percentage = []
-  var win_avg = []
+  const win_percentages = ref([])
+  var win_avg
+  var cash_avg
 
   async function setDivisions() {
     const response = await sendRequest('get-divisions', JSON.stringify({ t_id: String(t_id.value) }))
@@ -22,7 +25,6 @@
     state.value = 'loading'
     const payload = {
                 t_id: String(t_id.value),
-                email: email.value,
                 rounds: num_rounds.value,
                 current_div: current_div.value
               }
@@ -31,12 +33,14 @@
     var msg = await sendRequest('generate-report', JSON.stringify(payload))
 
     state.value = 'display'
-    win_percentage = msg.sorted_win_percentage
+    win_percentages.value = msg.sorted_win_percentage
     win_avg = msg.win_avg
+    cash_avg = msg.cash_avg
+    console.log(win_percentages.value)
   }
 
   async function sendRequest(destination, payload) {
-    var response = await fetch('https://server.cmediratta.com/' + destination, {
+    var response = await fetch(SERVER + destination, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: payload
@@ -60,22 +64,38 @@
     <div v-show="tournament_divisions.length>0">
       <DropdownMenu :options="tournament_divisions" placeholder="Select Division" v-model="current_div"/>
       <DropdownMenu :options="rds" placeholder="# of Rounds" v-model="num_rounds"/>
-      <label>E-mail: </label>
-      <InputField type="email" class="" Child v-model="email"/>
       <button @click="getData">Submit </button>
     </div>
   </form>
   <div v-else-if="state==='loading'">
-    Loading Data
+    Loading Data (Should be about 2 players per second)
   </div>
-  <div v-else-if="state==='display'">
-    {{ win_avg }}
-    {{ win_percentage }}
+  <div v-else-if="state==='display'" class="display-container">
+    <PlayerTable :win_percentages="win_percentages"/>
+    <div class="stats-container">
+      <div>Average Winning Rating: {{ win_avg }}</div>
+      <div>Average Cash Line Rating: {{ cash_avg }}</div>
+    </div>
   </div>
 </template>
 
 
 <style scoped>
+  .display-container {
+    display: flex;
+    gap: 2vw;
+  }
+  .stats-container {
+    display: flex;
+    flex-direction: column;
+    align-self: flex-start;
+    padding: 2vh;
+    background-color: #f0f0f0;
+    border-radius: 1vh;
+    width: 20vw;
+    font-size: 1.2vw;
+    color: black;
+  }
   form {
     text-align: left;
     padding: 4vh;
@@ -103,5 +123,9 @@
   }
   .newline {
     margin: 1.5vh 0;
+  }
+  .background {
+    background-color: blue;
+    width: 80vw;
   }
 </style>
