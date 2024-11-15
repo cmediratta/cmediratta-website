@@ -1,5 +1,5 @@
 <script setup>
-  const SERVER = 'server.cmediratta.com/'
+  const SERVER = 'https://server.cmediratta.com/'
   import InputField from './molecules/InputField.vue'
   import DropdownMenu from './molecules/DropdownMenu.vue'
   import PlayerTable from './molecules/PlayerTable.vue'
@@ -20,7 +20,6 @@
 
   async function handleErrorMessage(code) {
     error_bar.value = true
-    console.log(code)
     switch (code) {
       case 555:
         error_msg = "Tournament in progress/already finished."
@@ -31,8 +30,6 @@
       default:
         error_msg = "Unknown Error."
     }
-    console.log(error_bar.value)
-    console.log(error_msg)
   }
 
   async function setDivisions() {
