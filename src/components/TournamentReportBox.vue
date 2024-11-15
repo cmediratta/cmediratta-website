@@ -1,8 +1,9 @@
 <script setup>
-  const SERVER = 'https://server.cmediratta.com/'
+  const SERVER = 'server.cmediratta.com/'
   import InputField from './molecules/InputField.vue'
   import DropdownMenu from './molecules/DropdownMenu.vue'
   import PlayerTable from './molecules/PlayerTable.vue'
+  import ErrorBar from './molecules/ErrorBar.vue'
   import { ref } from 'vue'
   const rds = [1, 2, 3, 4, 5]
   var tournament_divisions = ref([])
@@ -14,29 +15,52 @@
   const win_percentages = ref([])
   var win_avg
   var cash_avg
+  var error_msg = ''
+  const error_bar = ref(false)
+
+  async function handleErrorMessage(code) {
+    error_bar.value = true
+    console.log(code)
+    switch (code) {
+      case 555:
+        error_msg = "Tournament in progress/already finished."
+        break
+      case 556:
+        error_msg = "Tournament does not exist."
+        break
+      default:
+        error_msg = "Unknown Error."
+    }
+    console.log(error_bar.value)
+    console.log(error_msg)
+  }
 
   async function setDivisions() {
-    const response = await sendRequest('get-divisions', JSON.stringify({ t_id: String(t_id.value) }))
-    console.log(response.message)
-    tournament_divisions.value = response.message
+    error_bar.value = false
+    const msg = await sendRequest('get-divisions', JSON.stringify({ t_id: String(t_id.value) }))
+    if (msg==0) {
+      return
+    }
+    tournament_divisions.value = msg.tournament_divisions
   }
 
   async function getData() {
+    error_bar.value = false
     state.value = 'loading'
     const payload = {
                 t_id: String(t_id.value),
                 rounds: num_rounds.value,
                 current_div: current_div.value
               }
-    console.log(payload)
-    
-    var msg = await sendRequest('generate-report', JSON.stringify(payload))
+    const msg = await sendRequest('generate-report', JSON.stringify(payload))
+    if(msg==0){
+      return
+    }
 
     state.value = 'display'
     win_percentages.value = msg.sorted_win_percentage
     win_avg = msg.win_avg
     cash_avg = msg.cash_avg
-    console.log(win_percentages.value)
   }
 
   async function sendRequest(destination, payload) {
@@ -46,15 +70,20 @@
       body: payload
     });
 
-    var data = await response.json()
+    const code = await response.status
 
-    return data
+    if (code!=200) {
+      handleErrorMessage(code)
+      return 0
+    }
+
+    return await response.json()
   }
 
 </script>
 
 <template>
-  <form @submit.prevent="handleSubmit" v-if="state==='input'">
+  <form @submit.prevent="" v-if="state==='input'">
     <div>
       <label>Input Tournament ID:</label>
       <img src="../assets/tour_id_image.jpg"></img>
@@ -77,6 +106,7 @@
       <div>Average Cash Line Rating: {{ cash_avg }}</div>
     </div>
   </div>
+  <ErrorBar :error_msg="error_msg" v-show="error_bar"/>
 </template>
 
 
